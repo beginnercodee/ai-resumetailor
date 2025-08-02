@@ -4,8 +4,11 @@ import { Textarea } from '@/components/ui/textarea'
 import { Button } from '@/components/ui/button'
 import { motion } from 'framer-motion'
 import { Upload } from 'lucide-react'
+import { useRouter } from "next/navigation";
+
 
 export default function ResumeEditorPage() {
+  const router = useRouter();
   return (
     <main className="min-h-screen bg-gradient-to-br from-[#2c3e50] to-[#4ca1af] text-white px-4 py-12 flex justify-center">
       <motion.div
@@ -31,9 +34,13 @@ export default function ResumeEditorPage() {
           <Button variant="outline" className="border-white/30 bg-white/10 text-white hover:bg-white/20">
             <Upload className="w-4 h-4 mr-2" /> Upload PDF
           </Button>
-          <Button className="px-6 py-2 rounded-xl hover:scale-105 transition">
-            Next: Add Job Description
-          </Button>
+          <Button
+  className="px-6 py-2 rounded-xl hover:scale-105 transition"
+  onClick={() => router.push("/job")}
+>
+  Next: Add Job Description
+</Button>
+
         </div>
       </motion.div>
     </main>

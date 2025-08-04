@@ -39,7 +39,16 @@ export default function ResultContent({
       </h2>
 
       {loading ? (
-        <p className="text-center text-white/80">⏳ Tailoring your resume...</p>
+  <div className="space-y-4 animate-pulse">
+    <div className="h-4 bg-white/10 rounded w-1/3 mx-auto" />
+    <div className="h-4 bg-white/10 rounded w-1/2 mx-auto" />
+    <div className="h-4 bg-white/10 rounded w-full" />
+    <div className="h-4 bg-white/10 rounded w-5/6" />
+    <div className="h-4 bg-white/10 rounded w-3/4" />
+    <div className="h-4 bg-white/10 rounded w-4/6" />
+    <div className="h-4 bg-white/10 rounded w-full" />
+    <div className="h-4 bg-white/10 rounded w-5/6" />
+  </div>
       ) : result ? (
         <>
           <div className="flex justify-between items-center mb-2">

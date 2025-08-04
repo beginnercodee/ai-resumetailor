@@ -3,8 +3,10 @@
 
 import { Button } from '@/components/ui/button'
 import { motion } from 'framer-motion'
+import { useRouter } from "next/navigation";
 
 export default function HomePage() {
+  const router = useRouter();
   return (
     <main className="flex min-h-screen flex-col items-center justify-center bg-gradient-to-br from-[#0f0c29] via-[#302b63] to-[#24243e] text-white px-4">
       <motion.div
@@ -19,7 +21,8 @@ export default function HomePage() {
         <p className="text-lg md:text-xl text-gray-300 mb-6">
           Instantly tailor your resume to match any job description — with the power of AI.
         </p>
-        <Button className="text-base px-6 py-4 rounded-xl hover:scale-105 transition">
+        <Button className="text-base px-6 py-4 rounded-xl hover:scale-105 transition"
+        onClick={() => router.push("/resume")}>
           Tailor My Resume
         </Button>
       </motion.div>

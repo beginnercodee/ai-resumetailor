@@ -3,6 +3,7 @@
 import { useEffect } from 'react';
 import confetti from 'canvas-confetti';
 import { motion } from 'framer-motion';
+import { Loader2 } from "lucide-react";
 
 export default function ResultContent({
   result,
@@ -39,17 +40,20 @@ export default function ResultContent({
       </h2>
 
       {loading ? (
-  <div className="space-y-4 animate-pulse">
-    <div className="h-4 bg-white/10 rounded w-1/3 mx-auto" />
-    <div className="h-4 bg-white/10 rounded w-1/2 mx-auto" />
+  <div className="flex flex-col items-center space-y-4 animate-pulse">
+    <div className="flex items-center gap-2 text-white/80 text-sm">
+      <Loader2 className="w-4 h-4 animate-spin" />
+      <span>⏳ Tailoring your resume...</span>
+    </div>
+    <div className="h-4 bg-white/10 rounded w-1/3" />
+    <div className="h-4 bg-white/10 rounded w-1/2" />
     <div className="h-4 bg-white/10 rounded w-full" />
     <div className="h-4 bg-white/10 rounded w-5/6" />
     <div className="h-4 bg-white/10 rounded w-3/4" />
     <div className="h-4 bg-white/10 rounded w-4/6" />
     <div className="h-4 bg-white/10 rounded w-full" />
-    <div className="h-4 bg-white/10 rounded w-5/6" />
   </div>
-      ) : result ? (
+) : result ? (
         <>
           <div className="flex justify-between items-center mb-2">
             <p className="text-white/80 text-sm">✅ Resume tailored successfully</p>

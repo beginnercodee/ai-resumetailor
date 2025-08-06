@@ -4,6 +4,8 @@ import { useEffect, useState } from 'react';
 import confetti from 'canvas-confetti';
 import { motion } from 'framer-motion';
 import { Loader2 } from "lucide-react";
+import useSound from 'use-sound';
+
 
 export default function ResultContent({
   result,
@@ -13,15 +15,19 @@ export default function ResultContent({
   loading: boolean;
 }) {
   const [copied, setCopied] = useState(false);
+  const [play] = useSound('/sound-effect-4769.mp3');
+
   useEffect(() => {
-    if (!loading && result) {
-      confetti({
-        particleCount: 150,
-        spread: 70,
-        origin: { y: 0.6 },
-      });
-    }
-  }, [loading, result]);
+  if (!loading && result) {
+    confetti({
+      particleCount: 150,
+      spread: 70,
+      origin: { y: 0.6 },
+    });
+    play(); // 🔊 Play the sound
+  }
+}, [loading, result, play]);
+
 
   const handleCopy = () => {
   if (result) {

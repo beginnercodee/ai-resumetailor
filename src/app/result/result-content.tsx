@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import confetti from 'canvas-confetti';
 import { motion } from 'framer-motion';
 import { Loader2 } from "lucide-react";
@@ -12,6 +12,7 @@ export default function ResultContent({
   result: string | null;
   loading: boolean;
 }) {
+  const [copied, setCopied] = useState(false);
   useEffect(() => {
     if (!loading && result) {
       confetti({
@@ -23,10 +24,13 @@ export default function ResultContent({
   }, [loading, result]);
 
   const handleCopy = () => {
-    if (result) {
-      navigator.clipboard.writeText(result);
-    }
-  };
+  if (result) {
+    navigator.clipboard.writeText(result);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 1500);
+  }
+};
+
 
   return (
     <motion.div
@@ -57,12 +61,14 @@ export default function ResultContent({
         <>
           <div className="flex justify-between items-center mb-2">
             <p className="text-white/80 text-sm">✅ Resume tailored successfully</p>
-            <button
-              onClick={handleCopy}
-              className="px-3 py-1 text-sm bg-white/10 hover:bg-white/20 border border-white/20 text-white rounded-md transition"
-            >
-              📋 Copy
-            </button>
+            <motion.button
+  onClick={handleCopy}
+  whileTap={{ scale: 0.9 }}
+  className="px-3 py-1 text-sm bg-white/10 hover:bg-white/20 border border-white/20 text-white rounded-md transition"
+>
+  {copied ? "✅ Copied!" : "📋 Copy"}
+</motion.button>
+
           </div>
 
           <pre className="whitespace-pre-wrap bg-white/10 border border-white/20 p-4 rounded-xl text-white text-sm md:text-base overflow-auto">

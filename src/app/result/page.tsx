@@ -1,4 +1,6 @@
 // src/app/result/page.tsx
+"use client";
+
 import { Suspense } from "react";
 import ResultClient from "./_ResultClient";
 import ResultSkeleton from "./ResultSkeleton";

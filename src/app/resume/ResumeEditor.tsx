@@ -4,7 +4,7 @@ import { useRef, useState } from "react";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 import { motion } from "framer-motion";
-import { Upload } from "lucide-react";
+import { Upload, Loader2 } from "lucide-react";
 import { useRouter } from "next/navigation";
 
 // Type definitions for PDF.js CDN
@@ -31,7 +31,9 @@ interface PDFDocumentProxy {
 }
 
 interface PDFJSStatic {
-  getDocument(options: { data: Uint8Array }): { promise: Promise<PDFDocumentProxy> };
+  getDocument(options: { data: Uint8Array }): {
+    promise: Promise<PDFDocumentProxy>;
+  };
   GlobalWorkerOptions: {
     workerSrc: string;
   };
@@ -51,7 +53,9 @@ export default function ResumeEditor() {
 
   const handleUploadClick = () => fileInputRef.current?.click();
 
-  const handleFileChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
+  const handleFileChange = async (
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
     const file = event.target.files?.[0];
     if (!file) return;
 
@@ -64,11 +68,12 @@ export default function ResumeEditor() {
 
     try {
       // Method 1: Using CDN version directly (most reliable)
-      if (typeof window !== 'undefined') {
+      if (typeof window !== "undefined") {
         // Load PDF.js from CDN
-        const script = document.createElement('script');
-        script.src = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js';
-        
+        const script = document.createElement("script");
+        script.src =
+          "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js";
+
         await new Promise((resolve, reject) => {
           script.onload = resolve;
           script.onerror = reject;
@@ -76,14 +81,15 @@ export default function ResumeEditor() {
         });
 
         // Set worker
-        window.pdfjsLib.GlobalWorkerOptions.workerSrc = 
-          'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+        window.pdfjsLib.GlobalWorkerOptions.workerSrc =
+          "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js";
 
         const fileReader = new FileReader();
         fileReader.onload = async () => {
           try {
             const typedArray = new Uint8Array(fileReader.result as ArrayBuffer);
-            const pdf = await window.pdfjsLib.getDocument({ data: typedArray }).promise;
+            const pdf = await window.pdfjsLib.getDocument({ data: typedArray })
+              .promise;
 
             let fullText = "";
             for (let i = 1; i <= pdf.numPages; i++) {
@@ -98,7 +104,9 @@ export default function ResumeEditor() {
             setResumeText(fullText.trim());
           } catch (err) {
             console.error("Error processing PDF:", err);
-            alert("Failed to extract text from PDF. Please try copying and pasting the text instead.");
+            alert(
+              "Failed to extract text from PDF. Please try copying and pasting the text instead."
+            );
           } finally {
             setIsProcessing(false);
           }
@@ -107,7 +115,9 @@ export default function ResumeEditor() {
       }
     } catch (err) {
       console.error("Error loading PDF.js:", err);
-      alert("Failed to load PDF processor. Please try copying and pasting the text instead.");
+      alert(
+        "Failed to load PDF processor. Please try copying and pasting the text instead."
+      );
       setIsProcessing(false);
     }
   };
@@ -151,28 +161,26 @@ export default function ResumeEditor() {
         <div className="flex items-center justify-between">
           <Button
             variant="outline"
-            className="border-white/30 bg-white/10 text-white hover:bg-white/20"
+            className="border-white/30 bg-white/10 text-white hover:bg-white/20 flex items-center"
             onClick={handleUploadClick}
             disabled={isProcessing}
           >
-            <Upload className="w-4 h-4 mr-2" /> 
+            {isProcessing ? (
+              <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+            ) : (
+              <Upload className="w-4 h-4 mr-2" />
+            )}
             {isProcessing ? "Processing..." : "Upload PDF"}
           </Button>
 
           <Button
             className="px-6 py-2 rounded-xl hover:scale-105 transition"
             onClick={() => router.push("/job")}
-            disabled={!resumeText.trim()}
+            disabled={!resumeText.trim()} // 👈 works both for paste + upload
           >
             Next: Add Job Description
           </Button>
         </div>
-
-        {isProcessing && (
-          <div className="text-center text-sm text-white/80">
-            Extracting text from PDF...
-          </div>
-        )}
       </motion.div>
     </main>
   );

@@ -42,7 +42,7 @@ export default function JobDescriptionPage() {
           </div>
 
           <div className="flex justify-end">
-            <Button type="submit" className="px-6 py-2 rounded-xl hover:scale-105 transition">
+            <Button type="submit" className="px-6 py-2 rounded-xl hover:scale-105 transition" disabled={!jobDesc.trim()}>
               Tailor Resume
             </Button>
           </div>

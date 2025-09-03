@@ -11,11 +11,20 @@ export default function JobDescriptionPage() {
   const [jobDesc, setJobDesc] = useState('')
 
   const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault()
-    if (!jobDesc.trim()) return
-    const encodedJob = encodeURIComponent(jobDesc.trim())
-    router.push(`/result?job=${encodedJob}`)
-  }
+  e.preventDefault()
+  if (!jobDesc.trim()) return
+
+  // get resumeText from search params (since it came from /resume page)
+  const searchParams = new URLSearchParams(window.location.search)
+  const resumeText = searchParams.get("resume") || ""
+
+  // encode both
+  const encodedJob = encodeURIComponent(jobDesc.trim())
+  const encodedResume = encodeURIComponent(resumeText)
+
+  // push both to result
+  router.push(`/result?resume=${encodedResume}&job=${encodedJob}`)
+}
 
   return (
     <main className="min-h-screen bg-gradient-to-br from-[#4B79A1] to-[#283E51] text-white px-4 py-12 flex justify-center">

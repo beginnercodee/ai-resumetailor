@@ -15,15 +15,30 @@ export default function JobDescriptionPage() {
   if (!jobDesc.trim()) return
 
   // get resumeText from search params (since it came from /resume page)
+  // URLSearchParams.get() automatically decodes, so we get the raw text
   const searchParams = new URLSearchParams(window.location.search)
   const resumeText = searchParams.get("resume") || ""
 
-  // encode both
+  if (!resumeText) {
+    console.error("Resume text is missing from URL parameters")
+    alert("Resume text is missing. Please go back and upload your resume again.")
+    return
+  }
+
+  // encode both for URL
   const encodedJob = encodeURIComponent(jobDesc.trim())
   const encodedResume = encodeURIComponent(resumeText)
 
-  // push both to result
-  router.push(`/result?resume=${encodedResume}&job=${encodedJob}`)
+  // Check URL length - browsers have limits (~2000 chars)
+  const url = `/result?resume=${encodedResume}&job=${encodedJob}`
+  if (url.length > 2000) {
+    // Use sessionStorage for long content
+    const dataKey = `resume_data_${Date.now()}`
+    sessionStorage.setItem(dataKey, JSON.stringify({ job: jobDesc.trim(), resume: resumeText }))
+    router.push(`/result?key=${dataKey}`)
+  } else {
+    router.push(url)
+  }
 }
 
   return (

@@ -175,7 +175,11 @@ export default function ResumeEditor() {
 
           <Button
             className="px-6 py-2 rounded-xl hover:scale-105 transition"
-            onClick={() => router.push("/job")}
+            onClick={() => {
+              // Encode resume text and pass it to job page
+              const encodedResume = encodeURIComponent(resumeText.trim());
+              router.push(`/job?resume=${encodedResume}`);
+            }}
             disabled={!resumeText.trim()} // 👈 works both for paste + upload
           >
             Next: Add Job Description

@@ -1,6 +1,6 @@
 // src/app/api/generate-pdf/route.ts
 import { NextResponse } from "next/server";
-import PDFDocument from "pdfkit";
+import { jsPDF } from "jspdf";
 
 // ✅ Run in Node.js runtime (not Edge)
 export const runtime = "nodejs";
@@ -11,26 +11,45 @@ export async function POST(req: Request) {
 
     console.log("📄 PDF API called with:", { title, textLength: text.length });
 
-    const doc = new PDFDocument({ size: "LETTER", margin: 50 });
-    const chunks: Buffer[] = [];
-    doc.on("data", (chunk: Buffer) => chunks.push(chunk));
-    doc.on("error", (err) => {
-      console.error("❌ PDFKit internal error:", err);
+    // Create PDF using jsPDF (works better with Next.js)
+    const doc = new jsPDF({
+      orientation: "portrait",
+      unit: "mm",
+      format: "letter", // 8.5 x 11 inches
     });
 
-    const finished = new Promise<void>((resolve, reject) => {
-      doc.on("end", () => resolve());
-      doc.on("error", reject);
+    // Set margins
+    const margin = 20; // 20mm margins
+    const pageWidth = doc.internal.pageSize.getWidth();
+    const pageHeight = doc.internal.pageSize.getHeight();
+    const maxWidth = pageWidth - 2 * margin;
+
+    // Add title (centered)
+    doc.setFontSize(18);
+    doc.setFont("helvetica", "bold");
+    const titleWidth = doc.getTextWidth(title);
+    doc.text(title, (pageWidth - titleWidth) / 2, margin + 10);
+
+    // Add content
+    doc.setFontSize(12);
+    doc.setFont("helvetica", "normal");
+    
+    // Split text into lines that fit the page width
+    const lines = doc.splitTextToSize(text || "(No content)", maxWidth);
+    let yPosition = margin + 25; // Start below title
+
+    // Add text line by line, handling page breaks
+    lines.forEach((line: string) => {
+      if (yPosition > pageHeight - margin - 10) {
+        doc.addPage();
+        yPosition = margin;
+      }
+      doc.text(line, margin, yPosition);
+      yPosition += 7; // Line height
     });
 
-    doc.fontSize(18).text(title, { align: "center" });
-    doc.moveDown();
-    doc.font("Times-Roman").fontSize(12).text(text || "(No content)", { align: "left" });
-
-    doc.end();
-    await finished;
-
-    const pdfBuffer = Buffer.concat(chunks);
+    // Generate PDF buffer
+    const pdfBuffer = Buffer.from(doc.output("arraybuffer"));
 
     return new Response(pdfBuffer, {
       status: 200,
@@ -41,6 +60,10 @@ export async function POST(req: Request) {
     });
   } catch (err) {
     console.error("❌ generate-pdf outer error:", err);
-    return NextResponse.json({ error: "Failed to generate PDF" }, { status: 500 });
+    const errorMessage = err instanceof Error ? err.message : "Unknown error";
+    return NextResponse.json(
+      { error: "Failed to generate PDF", details: errorMessage }, 
+      { status: 500 }
+    );
   }
 }

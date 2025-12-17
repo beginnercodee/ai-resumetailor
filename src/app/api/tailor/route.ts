@@ -55,7 +55,7 @@ Resume: ${truncatedResume}
 Tailored Resume:`;
 
     // Use a valid Gemini model name
-    const model = genAI.getGenerativeModel({ model: 'gemini-2.0-flash-lite' });
+    const model = genAI.getGenerativeModel({ model: 'gemini-3-pro-preview' });
     
     // Retry logic with exponential backoff for rate limits
     let result;

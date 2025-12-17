@@ -77,6 +77,18 @@ export default function ResultClient() {
         jobLength: jobParam?.length || 0,
         resumeLength: resumeParam?.length || 0
       });
+      
+      // Validate that both parameters exist before proceeding
+      if (!jobParam || !resumeParam || jobParam.trim() === "" || resumeParam.trim() === "") {
+        console.error("❌ Missing job or resume in URL parameters:", {
+          hasJob: !!jobParam,
+          hasResume: !!resumeParam
+        });
+        setResult("❌ Error: Missing job description or resume in URL. Please go back and try again.");
+        setLoading(false);
+        return;
+      }
+      
       setJob(jobParam);
       setResume(resumeParam);
     }

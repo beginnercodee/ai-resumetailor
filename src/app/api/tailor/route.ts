@@ -67,11 +67,12 @@ Tailored Resume:`;
       try {
         result = await model.generateContent(prompt);
         break; // Success, exit retry loop
-      } catch (error: any) {
-        lastError = error;
+      } catch (error) {
+        const err = error as Error;
+        lastError = err;
         
         // Check if it's a rate limit error (429)
-        if (error.message?.includes('429') || error.message?.includes('quota') || error.message?.includes('rate')) {
+        if (err.message?.includes('429') || err.message?.includes('quota') || err.message?.includes('rate')) {
           if (attempt < maxRetries - 1) {
             // Calculate exponential backoff delay
             const delay = baseDelay * Math.pow(2, attempt);
@@ -84,7 +85,7 @@ Tailored Resume:`;
           }
         } else {
           // Not a rate limit error, throw immediately
-          throw error;
+          throw err;
         }
       }
     }

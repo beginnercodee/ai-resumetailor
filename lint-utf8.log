@@ -1,0 +1,28 @@
+﻿node.exe : 
+At line:1 char:1
++ & "E:\NodeJS/node.exe" "E
+:\NodeJS/node_modules/npm/b
+in/npx-cli.js" ne ...
++ ~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~
+    + CategoryInfo         
+     : NotSpecified: (:St  
+  ring) [], RemoteExcept   
+ ion
+    + FullyQualifiedErrorI 
+   d : NativeCommandError
+ 
+./src/app/not-found.tsx
+10:18  Error: `'` can be 
+escaped with `&apos;`, 
+`&lsquo;`, `&#39;`, 
+`&rsquo;`.  
+react/no-unescaped-entities
+
+info  - Need to disable 
+some ESLint rules? Learn 
+more here: https://nextjs.o
+rg/docs/app/api-reference/c
+onfig/eslint#disabling-rule
+s

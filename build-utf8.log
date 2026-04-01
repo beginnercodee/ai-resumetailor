@@ -1,0 +1,40 @@
+﻿
+> ai-resumetailor@0.1.0 build
+> next build
+
+   Γû▓ Next.js 15.4.5
+   - Environments: .env.local
+
+   Creating an optimized production build ...
+ Γ£ô Compiled successfully in 7.0s
+   Linting and checking validity of types ...
+node.exe : 
+At line:1 char:1
++ & "E:\NodeJS/node.exe" "E
+:\NodeJS/node_modules/npm/b
+in/npm-cli.js" ru ...
++ ~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~
+    + CategoryInfo         
+     : NotSpecified: (:St  
+  ring) [], RemoteExcept   
+ ion
+    + FullyQualifiedErrorI 
+   d : NativeCommandError
+ 
+Failed to compile.
+
+./src/app/not-found.tsx
+10:18  Error: `'` can be 
+escaped with `&apos;`, 
+`&lsquo;`, `&#39;`, 
+`&rsquo;`.  
+react/no-unescaped-entities
+
+info  - Need to disable 
+some ESLint rules? Learn 
+more here: https://nextjs.o
+rg/docs/app/api-reference/c
+onfig/eslint#disabling-rule
+s

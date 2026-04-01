@@ -1,0 +1,9 @@
+﻿   Γû▓ Next.js 15.4.5
+   - Local:        http://localhost:3001
+   - Network:      http://192.168.100.8:3001
+   - Environments: .env.local
+
+ Γ£ô Starting...
+ Γ£ô Ready in 11.2s
+ Γùï Compiling / ...
+ Γ£ô Compiled / in 6.3s (1413 modules)

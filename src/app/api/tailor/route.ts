@@ -61,7 +61,7 @@ Tailored Resume:`;
     let result;
     let lastError;
     const maxRetries = 3;
-    const baseDelay = 1000; // 1 second
+    const baseDelay = 3000; // 3 seconds
     
     for (let attempt = 0; attempt < maxRetries; attempt++) {
       try {
@@ -98,11 +98,12 @@ Tailored Resume:`;
 
     return NextResponse.json({ result: text });
   } catch (error) {
-    console.error('API Error:', error);
     const errorMessage = error instanceof Error ? error.message : 'Unknown error';
     
     // Handle rate limit errors specifically
-    if (errorMessage.includes('429') || errorMessage.includes('quota') || errorMessage.includes('rate limit')) {
+    const lowerCaseMessage = errorMessage.toLowerCase();
+    if (lowerCaseMessage.includes('429') || lowerCaseMessage.includes('quota') || lowerCaseMessage.includes('rate limit')) {
+      console.warn('⚠️ API Warning: Rate limit exhausted, returning 429 gracefully.');
       return NextResponse.json(
         { 
           error: 'Rate limit exceeded', 
@@ -113,6 +114,7 @@ Tailored Resume:`;
       );
     }
     
+    console.error('API Error:', error);
     return NextResponse.json(
       { error: 'Something went wrong', details: errorMessage },
       { status: 500 }

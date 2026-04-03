@@ -5,6 +5,7 @@ import confetti from "canvas-confetti";
 import { motion } from "framer-motion";
 import { Loader2 } from "lucide-react";
 import useSound from "use-sound";
+import ReactMarkdown from "react-markdown";
 
 export default function ResultContent({
   result,
@@ -28,33 +29,26 @@ export default function ResultContent({
     }
   }, [loading, result, play]);
 
-  const handleDownloadServerPdf = async () => {
-  if (!result) return;
-  try {
-    const res = await fetch("/api/generate-pdf", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ text: result, title: "Tailored Resume" }),
-    });
-
-    if (!res.ok) {
-      console.error("PDF generation failed", await res.text());
-      return;
+  const handleDownloadPdf = async () => {
+    if (!result || !resumeRef.current) return;
+    try {
+      // Import html2pdf dynamically so it doesn't break SSR
+      const html2pdf = (await import('html2pdf.js')).default;
+      
+      const element = resumeRef.current;
+      const opt = {
+        margin:       15,
+        filename:     'Tailored_Resume.pdf',
+        image:        { type: 'jpeg', quality: 0.98 },
+        html2canvas:  { scale: 2, useCORS: true },
+        jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' }
+      };
+      
+      html2pdf().set(opt).from(element).save();
+    } catch (err) {
+      console.error("PDF download error:", err);
     }
-
-    const blob = await res.blob();
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement("a");
-    a.href = url;
-    a.download = "Tailored_Resume.pdf";
-    document.body.appendChild(a);
-    a.click();
-    a.remove();
-    URL.revokeObjectURL(url);
-  } catch (err) {
-    console.error("Download error", err);
-  }
-};
+  };
 
 
   const handleCopy = () => {
@@ -105,18 +99,32 @@ export default function ResultContent({
             </motion.button>
           </div>
 
-          <div ref={resumeRef}>
-  <pre className="whitespace-pre-wrap bg-white/10 border border-white/20 p-4 rounded-xl text-white text-sm md:text-base overflow-auto">
-    {result}
-  </pre>
-</div>
+          {/* White Paper Canvas for PDF Rendering */}
+          <div className="bg-white text-black p-8 rounded-xl overflow-auto w-full shadow-inner border border-gray-200">
+            <div ref={resumeRef} className="font-sans text-sm md:text-base text-gray-800">
+              <ReactMarkdown
+                components={{
+                  h1: ({node, ...props}) => <h1 className="text-3xl font-extrabold text-[#1e3a8a] border-b-2 border-slate-200 pb-2 mb-4 mt-6 tracking-wide" {...props} />,
+                  h2: ({node, ...props}) => <h2 className="text-xl font-bold text-[#1e40af] border-b border-slate-200 pb-1 mb-3 mt-5 tracking-wide" {...props} />,
+                  h3: ({node, ...props}) => <h3 className="text-lg font-bold text-gray-900 mb-2 mt-4" {...props} />,
+                  ul: ({node, ...props}) => <ul className="list-disc pl-5 mb-4 space-y-1 text-gray-700" {...props} />,
+                  ol: ({node, ...props}) => <ol className="list-decimal pl-5 mb-4 space-y-1 text-gray-700" {...props} />,
+                  li: ({node, ...props}) => <li className="pl-1" {...props} />,
+                  p: ({node, ...props}) => <p className="mb-3 leading-relaxed text-gray-800" {...props} />,
+                  strong: ({node, ...props}) => <strong className="font-bold text-gray-900" {...props} />
+                }}
+              >
+                {result}
+              </ReactMarkdown>
+            </div>
+          </div>
 
-<button
-  onClick={handleDownloadServerPdf}
-  className="no-print mt-4 px-4 py-2 bg-white/10 border border-white/20 text-white rounded-md hover:bg-white/20 transition"
->
-  Download PDF
-</button>
+          <button
+            onClick={handleDownloadPdf}
+            className="no-print mt-6 px-6 py-3 bg-blue-600 border border-blue-500 text-white font-medium rounded-lg hover:bg-blue-700 shadow-md transition-all active:scale-95 duration-200"
+          >
+            Download Formatted PDF
+          </button>
           <div className="text-center text-white/60 text-xs mt-4">
             Tailored with ❤️ by AI Resume Tailor
           </div>
